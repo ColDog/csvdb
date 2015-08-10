@@ -80,13 +80,8 @@ module Csvdb
     end
 
     def pretty
-      puts ' '
-      print @cols.keys
-      puts ' '
-      @table.each do |row|
-        print row
-        puts ' '
-      end
+      table = Terminal::Table.new headings: @cols.keys, rows: @table
+      puts table
     end
 
     private

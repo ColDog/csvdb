@@ -28,15 +28,17 @@ describe 'Query Capabilities' do
   let(:table) { Csvdb.new(file: stats) }
 
   it 'search for results' do
-    expect(table.where { |row| row[3] == '233' }.count).to eq 2
+    expect(table.where { |row| row[3] == 233 }.count).to eq 2
   end
 
   it 'find by an id' do
-    expect( table.find(0).counts ).to eq '741'
+    expect( table.find(0).counts ).to eq 741
   end
 
   it 'find by a block' do
-    expect(table.find { |row| row[table.counts] == '741' }.counts).to eq '741'
+    rec = table.find { |row| row[table.counts] == 741 }
+    expect( rec.counts ).to eq 741
+    expect( rec[2] ).to eq 741
   end
 
   it 'get all records' do
@@ -78,5 +80,15 @@ describe 'CRUD Functionality' do
     expect( simple.find(0) ).to eq nil
     expect( t1 ).to eq t2
   end
+
+end
+
+describe 'Presentation' do
+
+  # it 'prints a table' do
+  #   tt = Csvdb.new(file: stats)
+  #   print tt.table
+  #   tt.pretty
+  # end
 
 end
