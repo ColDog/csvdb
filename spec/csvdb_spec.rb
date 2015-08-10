@@ -8,12 +8,12 @@ describe 'Basic Functionality' do
   end
 
   it 'the correct number of rows' do
-    table = Csvdb.new(file: stats)
+    table = Csvdb.new(file: stats, name: 'table')
     expect(table.count).to eq 1200
   end
 
   it 'open and write to a file' do
-    table = Csvdb.new(file: one)
+    table = Csvdb.new(file: one, name: 'table')
     table.write(write_to)
     expect(table).not_to be nil
     File.open(write_to).each_with_index do |line, idx|
@@ -25,7 +25,7 @@ describe 'Basic Functionality' do
 end
 
 describe 'Query Capabilities' do
-  let(:table) { Csvdb.new(file: stats) }
+  let(:table) { Csvdb.new(file: stats, name: 'table') }
 
   it 'search for results' do
     expect(table.where { |row| row[3] == 233 }.count).to eq 2
@@ -54,8 +54,8 @@ describe 'Query Capabilities' do
 end
 
 describe 'CRUD Functionality' do
-  let(:table) { Csvdb.new(file: stats) }
-  let(:simple) { Csvdb.new(file: one) }
+  let(:table) { Csvdb.new(file: stats, name: 'stat') }
+  let(:simple) { Csvdb.new(file: one, name: 'table') }
 
   it 'create a record' do
     simple.create(test1: 'foo', test2: 'bar')
@@ -90,22 +90,23 @@ describe 'CRUD Functionality' do
 end
 
 describe 'Joins' do
-  let(:table1) { Csvdb.new(file: join1) }
-  let(:table2) { Csvdb.new(file: join2) }
+  let(:table1) { Csvdb.new(file: join1, name: 'one') }
+  let(:table2) { Csvdb.new(file: join2, name: 'two') }
 
   it 'joins two tables' do
     joined = table1.join(table2, :id)
     expect( joined.find(0) ).to eq [1, "one", "one1"]
+    joined.pretty
   end
 
 end
 
 describe 'Presentation' do
 
-  it 'prints a table' do
-    tt = Csvdb.new(file: stats)
-    print tt.table
-    tt.pretty
-  end
+  # it 'prints a table' do
+  #   tt = Csvdb.new(file: stats)
+  #   print tt.table
+  #   tt.pretty
+  # end
 
 end

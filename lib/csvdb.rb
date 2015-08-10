@@ -11,7 +11,4 @@ module Csvdb
   def new(opts = {})
     Table.new(opts)
   end
-  def files(files = {})
-
-  end
 end

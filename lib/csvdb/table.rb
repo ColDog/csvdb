@@ -9,10 +9,10 @@ module Csvdb
   end
 
   class Table
-    attr_accessor :cols, :table
+    attr_accessor :cols, :table, :table_name
 
     def initialize(opts = {})
-
+      @table_name = opts[:name]
       if opts[:file]
         @file = opts[:file]
         table = CSV.read(@file)
@@ -62,6 +62,10 @@ module Csvdb
       @table << Row.new(new_row, self, @table.length)
     end
 
+    def add(attrs)
+      @table << Row.new(attrs, self, @table.length)
+    end
+
     def where
       Table.new(ary: @table.select { |row| yield(row) }, cols: self.cols)
     end
@@ -71,13 +75,19 @@ module Csvdb
     # which is joined on.
     def join(table, column)
       col = self.send(column)
-      cols = ((self.cols.keys + table.cols.keys).uniq).map.with_index {|head,idx| [head.to_sym,idx] }.to_h
+      cols = ([column] + (self.cols.keys - [column])
+                .map { |k| "#{k}_#{self.table_name}".to_sym } +
+                ((table.cols.keys - [column])
+                .map { |k| "#{k}_#{table.table_name}".to_sym }))
+                .map.with_index {|head,idx| [head.to_sym,idx] }.to_h
+
       joined = Table.new(ary: [], cols: cols)
       ids = (self.pluck(column) + table.pluck(column)).uniq
       ids.each do |id|
         self.where { |row| row[col] == id }.table.each do |outer_row|
           table.where { |row| row[col] == id }.table.each do |inner_row|
-            joined.create(outer_row.to_hash.merge(inner_row.to_hash))
+            inner_row.delete_at(col)
+            joined.add(outer_row + inner_row)
           end
         end
       end
