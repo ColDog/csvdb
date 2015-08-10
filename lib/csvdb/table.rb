@@ -12,6 +12,7 @@ module Csvdb
         @file = opts[:file]
         table = CSV.read(@file)
         @cols = table[0].map.with_index {|head,idx| [head.to_sym,idx] }.to_h
+        table.delete_at(0)
       elsif opts[:ary]
         table = opts[:ary]
         @cols = opts[:cols]
@@ -19,14 +20,13 @@ module Csvdb
         raise ParseError, 'No table or file to parse.'
       end
 
-      table = table - table[0] if table[0]
+      @cols.each do |col, val|
+        add_attr(col, val)
+      end
+
       @table = []
       table.each_with_index do |row, idx|
         @table[idx] = Row.new(row, self, idx)
-      end
-
-      @cols.each do |col, val|
-        add_attr(col, val)
       end
 
     end

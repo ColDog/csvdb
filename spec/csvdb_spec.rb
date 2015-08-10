@@ -9,7 +9,7 @@ describe 'Basic Functionality' do
 
   it 'the correct number of rows' do
     table = Csvdb.new(file: stats)
-    expect(table.count).to eq 1201
+    expect(table.count).to eq 1200
   end
 
   it 'open and write to a file' do
@@ -17,8 +17,8 @@ describe 'Basic Functionality' do
     table.write(write_to)
     expect(table).not_to be nil
     File.open(write_to).each_with_index do |line, idx|
-      expect(line).to eq "test1,test2\n" if idx == 1
-      expect(line).to eq "name1,name2\n" if idx == 2
+      expect(line).to eq("test1,test2\n") if idx == 0
+      expect(line).to eq("name1,name2\n") if idx == 1
     end
   end
 
@@ -32,7 +32,7 @@ describe 'Query Capabilities' do
   end
 
   it 'find by an id' do
-    expect(table.find(1).counts).to eq '741'
+    expect( table.find(0).counts ).to eq '741'
   end
 
   it 'find by a block' do
@@ -46,7 +46,7 @@ describe 'Query Capabilities' do
   it 'pluck records' do
     versions = table.pluck(:version)
     expect( versions ).to eq versions.flatten
-    expect( versions.count ).to eq 1201
+    expect( versions.count ).to eq 1200
   end
 
 end
@@ -57,25 +57,25 @@ describe 'CRUD Functionality' do
 
   it 'create a record' do
     simple.create(test1: 'foo', test2: 'bar')
-    expect(simple.find(2).test1).to eq 'foo'
-    expect(simple.find(2).test2).to eq 'bar'
+    expect( simple.find(1).test1 ).to eq 'foo'
+    expect( simple.find(1).test2 ).to eq 'bar'
   end
 
   it 'update a record' do
-    rec = simple.find(1)
+    rec = simple.find(0)
     expect( rec.test1 ).to eq "name1"
     rec.update(test1: 'foo', test2: 'bar')
-    expect( simple.find(1) ).to eq ["foo", "bar"]
+    expect( simple.find(0) ).to eq ["foo", "bar"]
     expect( rec.test1 ).to eq "foo"
   end
 
   it 'delete a record' do
     t1 = simple.count
-    rec = simple.find(1)
-    expect( simple.find(1) ).to_not eq nil
+    rec = simple.find(0)
+    expect( simple.find(0) ).to_not eq nil
     rec.delete
     t2 = simple.count
-    expect( simple.find(1) ).to eq nil
+    expect( simple.find(0) ).to eq nil
     expect( t1 ).to eq t2
   end
 
