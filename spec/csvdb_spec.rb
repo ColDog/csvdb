@@ -89,6 +89,17 @@ describe 'CRUD Functionality' do
 
 end
 
+describe 'Joins' do
+  let(:table1) { Csvdb.new(file: join1) }
+  let(:table2) { Csvdb.new(file: join2) }
+
+  it 'joins two tables' do
+    joined = table1.join(table2, :id)
+    expect( joined.find(0) ).to eq [1, "one", "one1"]
+  end
+
+end
+
 describe 'Presentation' do
 
   # it 'prints a table' do

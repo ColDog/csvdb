@@ -17,3 +17,11 @@ end
 def stats
   path('/spec/docs/stats.csv')
 end
+
+def join1
+  path('/spec/docs/join1.csv')
+end
+
+def join2
+  path('/spec/docs/join2.csv')
+end

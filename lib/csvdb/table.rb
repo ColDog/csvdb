@@ -3,6 +3,11 @@ require 'csvdb/row'
 require 'csvdb/errors'
 
 module Csvdb
+
+  class Join
+
+  end
+
   class Table
     attr_accessor :cols, :table
 
@@ -59,6 +64,21 @@ module Csvdb
 
     def where
       Table.new(ary: @table.select { |row| yield(row) }, cols: self.cols)
+    end
+
+    def join(table, column)
+      col = self.send(column)
+      cols = ((self.cols.keys + table.cols.keys).uniq).map.with_index {|head,idx| [head.to_sym,idx] }.to_h
+      joined = Table.new(ary: [], cols: cols)
+      ids = (self.pluck(column) + table.pluck(column)).uniq
+      ids.each do |id|
+        self.where { |row| row[col] == id }.table.each do |outer_row|
+          table.where { |row| row[col] == id }.table.each do |inner_row|
+            joined.create(outer_row.to_hash.merge(inner_row.to_hash))
+          end
+        end
+      end
+      return joined
     end
 
     def find(idx = nil)
