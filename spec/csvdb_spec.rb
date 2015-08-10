@@ -63,6 +63,12 @@ describe 'CRUD Functionality' do
     expect( simple.find(1).test2 ).to eq 'bar'
   end
 
+  it 'create a record with a float' do
+    simple.create(test1: 1.00, test2: 1.01)
+    expect( simple.find(1).test1 ).to eq 1.0
+    expect( simple.find(1).test2 ).to eq 1.01
+  end
+
   it 'update a record' do
     rec = simple.find(0)
     expect( rec.test1 ).to eq "name1"
