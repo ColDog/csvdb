@@ -44,6 +44,10 @@ module Csvdb
       @table
     end
 
+    def count
+      @table.count
+    end
+
     def create(attrs)
       new_row = []
       attrs.each do |att, new_val|
