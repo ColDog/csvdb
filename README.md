@@ -46,7 +46,6 @@ query.count #=> 1
 
 # joins also always return table objects.
 # the join joins on the same column name in each table.
-# right now the other column names must be different.
 joined = table.join(another_table, :column)
 ```
 
