@@ -102,10 +102,10 @@ end
 
 describe 'Presentation' do
 
-  # it 'prints a table' do
-  #   tt = Csvdb.new(file: stats)
-  #   print tt.table
-  #   tt.pretty
-  # end
+  it 'prints a table' do
+    tt = Csvdb.new(file: stats)
+    print tt.table
+    tt.pretty
+  end
 
 end
