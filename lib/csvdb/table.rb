@@ -66,6 +66,9 @@ module Csvdb
       Table.new(ary: @table.select { |row| yield(row) }, cols: self.cols)
     end
 
+    # todo note that right now it currently requires that each
+    # column name be unique within the table except that column
+    # which is joined on.
     def join(table, column)
       col = self.send(column)
       cols = ((self.cols.keys + table.cols.keys).uniq).map.with_index {|head,idx| [head.to_sym,idx] }.to_h
