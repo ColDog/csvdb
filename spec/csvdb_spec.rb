@@ -28,7 +28,7 @@ describe 'Query Capabilities' do
   let(:table) { Csvdb.new(file: stats, name: 'table') }
 
   it 'search for results' do
-    expect(table.where { |row| row[3] == 233 }.count).to eq 2
+    expect(table.where('search') { |row| row[3] == 233 }.count).to eq 2
   end
 
   it 'find by an id' do
@@ -94,7 +94,7 @@ describe 'Joins' do
   let(:table2) { Csvdb.new(file: join2, name: 'two') }
 
   it 'joins two tables' do
-    joined = table1.join(table2, :id)
+    joined = table1.join(table2, col1: :id, col2: :id)
     expect( joined.find(0) ).to eq [1, "one", "one1"]
     joined.pretty
   end

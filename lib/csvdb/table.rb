@@ -71,27 +71,29 @@ module Csvdb
       @table << Row.new(attrs, self, @table.length)
     end
 
-    def where
-      Table.new(ary: @table.select { |row| yield(row) }, cols: self.cols)
+    def where(search_name = 'search')
+      Table.new(
+        ary: @table.select { |row| yield(row) },
+        cols: self.cols,
+        name: search_name
+      )
     end
 
-    # todo note that right now it currently requires that each
-    # column name be unique within the table except that column
-    # which is joined on.
-    def join(table, column)
-      col = self.send(column)
-      cols = ([column] + (self.cols.keys - [column])
+    def join(table, opts = {})
+      col1 = opts[:col1] ; idx1 = self.send(col1)
+      col2 = opts[:col2] ; idx2 = self.send(col2)
+      cols = ([col1] + (self.cols.keys - [col1])
                 .map { |k| "#{k}_#{self.table_name}".to_sym } +
-                ((table.cols.keys - [column])
+                ((table.cols.keys - [col1])
                 .map { |k| "#{k}_#{table.table_name}".to_sym }))
                 .map.with_index {|head,idx| [head.to_sym,idx] }.to_h
 
-      joined = Table.new(ary: [], cols: cols)
-      ids = (self.pluck(column) + table.pluck(column)).uniq
+      joined = Table.new(ary: [], cols: cols, name: "#{self.table_name}.#{cols[:col1]} join #{table.table_name}.#{cols[:col2]}")
+      ids = (self.pluck(col1) + table.pluck(col2)).uniq
       ids.each do |id|
-        self.where { |row| row[col] == id }.table.each do |outer_row|
-          table.where { |row| row[col] == id }.table.each do |inner_row|
-            inner_row.delete_at(col)
+        self.where { |row| row[idx1] == id }.table.each do |outer_row|
+          table.where { |row| row[idx2] == id }.table.each do |inner_row|
+            inner_row.delete_at(idx2)
             joined.add(outer_row + inner_row)
           end
         end
