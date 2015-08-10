@@ -32,6 +32,7 @@ module Csvdb
     end
 
     def write(file = @file)
+      File.open(file, 'w') unless File.file?(file)
       CSV.open(file, 'wb') do |csv|
         csv << @cols.keys
         @table.each do |row|
