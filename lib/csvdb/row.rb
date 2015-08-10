@@ -47,6 +47,7 @@ module Csvdb
       end
 
       def convert(str)
+        return str if str.class != String
         begin
           Integer(str)
         rescue ArgumentError
