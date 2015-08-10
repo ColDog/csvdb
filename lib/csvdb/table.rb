@@ -12,7 +12,12 @@ module Csvdb
     attr_accessor :cols, :table, :table_name
 
     def initialize(opts = {})
-      @table_name = opts[:name]
+      if opts[:name]
+        @table_name = opts[:name]
+      else
+        raise TableError, 'No name on that table'
+      end
+
       if opts[:file]
         @file = opts[:file]
         table = CSV.read(@file)
@@ -22,7 +27,7 @@ module Csvdb
         table = opts[:ary]
         @cols = opts[:cols]
       else
-        raise ParseError, 'No table or file to parse.'
+        raise TableError, 'No table or file to parse.'
       end
 
       @cols.each do |col, val|
