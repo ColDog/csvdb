@@ -45,8 +45,7 @@ query = table.where { |row| row[table.id] == 1 }
 query.count #=> 1
 
 # joins also always return table objects.
-# the join joins on the same column name in each table.
-joined = table.join(another_table, :column)
+joined = table.join(another_table, col1: :table_col, col2: :another_table_col)
 ```
 
 #### Printing
