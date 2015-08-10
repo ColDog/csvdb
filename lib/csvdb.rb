@@ -6,4 +6,8 @@ require 'csvdb/table'
 
 
 module Csvdb
+  extend self
+  def new(opts = {})
+    Table.new(opts)
+  end
 end
